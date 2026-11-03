@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulado Interativo de Inglês - 8º Ano</title>
+  <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #002147;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Scrollbar Estilizada */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dc2626;
+      border-radius: 5px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b91c1c;
+    }
+
+    /* Header e Navegação */
+    header {
+      width: 100%;
+      max-width: 850px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo {
+      max-width: 180px;
+      height: auto;
+      margin-bottom: 15px;
+      display: block;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      background-color: #001026;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 15px;
+      font-size: 1.8rem;
+    }
+
+    .nav-grid {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: 2px solid #ffffff;
+      background-color: #001530;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #003366;
+    }
+
+    .nav-btn.active {
+      border-color: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+
+    .nav-btn.correct {
+      background-color: #16a34a !important;
+      border-color: #16a34a !important;
+      color: #fff;
+    }
+
+    .nav-btn.incorrect {
+      background-color: #dc2626 !important;
+      border-color: #dc2626 !important;
+      color: #fff;
+    }
+
+    /* Container Principal */
+    .container {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 850px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #000;
+    }
+
+    /* Pinned Text (Texto Fixo com Scroll) */
+    .pinned-text-box {
+      max-height: 220px;
+      overflow-y: auto;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #dc2626;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #000;
+    }
+
+    .pinned-text-box h4 {
+      margin-bottom: 8px;
+      color: #dc2626;
+    }
+
+    /* Enunciado */
+    .statement {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #000;
+      font-weight: 500;
+    }
+
+    /* Opções de Resposta */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 12px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      background-color: #fff;
+    }
+
+    .option-item:hover {
+      background-color: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .option-item input[type="radio"] {
+      margin-top: 4px;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+
+    .option-text {
+      font-size: 1rem;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .option-item.selected {
+      border-color: #dc2626;
+      background-color: #fef2f2;
+    }
+
+    .option-item.correct-bg {
+      background-color: #dcfce7 !important;
+      border-color: #16a34a !important;
+    }
+
+    .option-item.incorrect-bg {
+      background-color: #fee2e2 !important;
+      border-color: #dc2626 !important;
+    }
+
+    /* Justificativa / Feedback */
+    .feedback-box {
+      display: none;
+      background-color: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 15px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: #000;
+    }
+
+    .feedback-box.show {
+      display: block;
+    }
+
+    .feedback-box strong {
+      color: #0284c7;
+    }
+
+    /* Botões de Ação na Ordem: [ Next ] [ Check ] [ Previous ] */
+    .action-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      flex: 1;
+      max-width: 150px;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: #b91c1c;
+    }
+
+    .btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .btn-finish {
+      background-color: #16a34a;
+      max-width: 200px;
+    }
+
+    .btn-finish:hover {
+      background-color: #15803d;
+    }
+
+    /* Modal de Resultado Final */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.75);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      border: 3px solid #dc2626;
+      border-radius: 10px;
+      max-width: 650px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+      color: #000;
+    }
+
+    .modal-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 10px;
+    }
+
+    .modal-header h2 {
+      color: #dc2626;
+      font-size: 1.8rem;
+    }
+
+    .score-display {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      background-color: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+
+    .stat-value.correct { color: #16a34a; }
+    .stat-value.incorrect { color: #dc2626; }
+
+    .diagnostics-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .diagnostics-list {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .action-buttons {
+        flex-direction: row;
+      }
+      .btn {
+        padding: 10px 10px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="master.png" alt="Logo Master" class="logo">
+    <h1>Simulado de Língua Inglesa - 8º Ano</h1>
+    <div class="nav-grid" id="nav-grid">
+      <!-- Botões de 1 a 10 gerados via JS -->
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="question-header">
+      <span class="question-title" id="question-title">Questão 1 de 10</span>
+    </div>
+
+    <!-- Pinned Text (Exibido nas Questões 1 e 2) -->
+    <div class="pinned-text-box" id="pinned-text-box" style="display: none;">
+      <h4>Texto Base:</h4>
+      <p id="pinned-text-content"></p>
+    </div>
+
+    <!-- Enunciado -->
+    <div class="statement" id="statement-text">
+      <!-- Enunciado será carregado aqui -->
+    </div>
+
+    <!-- Opções -->
+    <div class="options-list" id="options-list">
+      <!-- Opções serão carregadas aqui -->
+    </div>
+
+    <!-- Justificativa -->
+    <div class="feedback-box" id="feedback-box">
+      <strong>Justificativa:</strong> <span id="feedback-text"></span>
+    </div>
+
+    <!-- Botões de Ação: [ Next ] [ Check ] [ Previous ] -->
+    <div class="action-buttons">
+      <button class="btn" id="btn-next" onclick="nextQuestion()">Next</button>
+      <button class="btn" id="btn-check" onclick="checkAnswer()">Check</button>
+      <button class="btn" id="btn-prev" onclick="prevQuestion()">Previous</button>
+    </div>
+  </main>
+
+  <!-- Modal de Resultado Final -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Resultado do Simulado</h2>
+      </div>
+      <div class="score-display" id="score-display">
+        Sua Nota: 0,0 / 10,0
+      </div>
+      <div class="stats-container">
+        <div class="stat-item">
+          <div>Acertos</div>
+          <div class="stat-value correct" id="stat-correct">0 (0%)</div>
+        </div>
+        <div class="stat-item">
+          <div>Erros</div>
+          <div class="stat-value incorrect" id="stat-incorrect">0 (0%)</div>
+        </div>
+      </div>
+      <div class="diagnostics-title">Diagnóstico e Recomendações Pedagógicas:</div>
+      <ul class="diagnostics-list" id="diagnostics-list">
+        <!-- Recomendações dinâmicas -->
+      </ul>
+      <div class="modal-footer">
+        <button class="btn btn-finish" onclick="restartQuiz()">Refazer Simulado</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // TEXTO BASE PARA AS QUESTÕES 1 E 2 (A2+ CEFR - Daily Emissions & Environmental Challenges)
+    const textBase12 = `"Daily Emissions and Our Carbon Footprint"\n\n` +
+      `Every single day, modern human activities release large amounts of carbon dioxide (CO2) into the atmosphere. This gas, along with other pollutants, accumulates in the lower layers of the atmosphere and contributes to environmental degradation. In our homes, appliances like old air conditioners, large refrigerators, and water heaters consume huge amounts of electricity. Because fossil fuels generate most of this power, simply keeping our devices plugged in continuously increases our daily carbon footprint.\n\n` +
+      `Transportation is another massive source of greenhouse gas emissions. Millions of gasoline-powered cars and motorcycles drive through city streets every morning, releasing harmful smoke directly into the air. Additionally, fast food packaging, single-use plastic bottles, and synthetic clothing require intensive industrial production. Factories that manufacture these everyday products burn coal and oil, which intensifies global pollution levels and indirectly affects atmospheric stability.\n\n` +
+      `Overcoming these environmental challenges requires urgent actions from both individuals and global leaders. Switching to renewable energy sources, such as solar power, can drastically reduce emissions from domestic appliances. Furthermore, choosing public transport, riding bicycles, and buying locally produced goods are effective solutions. Although changing daily habits requires effort, reducing CO2 emissions is essential to guarantee a sustainable planet for future generations.`;
+
+    // ESTRUTURA DOS DADOS DAS QUESTÕES
+    const rawQuestions = [
+      {
+        id: 1,
+        topic: "Compreensão Textual Avançada",
+        pinnedText: textBase12,
+        statement: "Based on the text, analyze the statements below and choose the correct inference regarding the origin of daily CO2 emissions:",
+        correctKey: "C",
+        options: {
+          A: "Air conditioners and refrigerators produce CO2 directly without using any electrical power.",
+          B: "Plastic bottles and synthetic clothing only generate pollution when they are discarded in rivers.",
+          C: "Domestic emissions occur indirectly because the generation of electricity still relies heavily on burning fossil fuels.",
+          D: "Transportation is the only human activity responsible for atmospheric pollution in urban cities.",
+          E: "Factories generate zero CO2 emissions when manufacturing fast food packaging."
+        },
+        justification: "Resposta correta: C. O primeiro parágrafo explica que aparelhos domésticos consomem eletricidade e que 'because fossil fuels generate most of this power', o uso contínuo desses aparelhos aumenta a pegada de carbono, mostrando uma emissão indireta ligada à matriz energética."
+      },
+      {
+        id: 2,
+        topic: "Compreensão Textual Avançada",
+        pinnedText: textBase12,
+        statement: "According to the solutions proposed in the third paragraph, what is required to effectively mitigate global pollution levels?",
+        correctKey: "D",
+        options: {
+          A: "Stopping the production of all industrial goods and closing down energy plants permanently.",
+          B: "Replacing public transport with private gasoline cars to reduce traffic jams in big cities.",
+          C: "Relying exclusively on individual habit changes while ignoring global leadership actions.",
+          D: "Combining structural changes like solar energy with individual choices like cycling and buying local products.",
+          E: "Ignoring daily habits since domestic appliances have no real impact on global emissions."
+        },
+        justification: "Resposta correta: D. O texto destaca no 3º parágrafo a necessidade de ações combinadas: liderança global e indivíduos, citando a transição para energia solar (estrutural) e o uso de bicicletas/produtos locais (hábitos individuais)."
+      },
+      {
+        id: 3,
+        topic: "Uso ou Não do Pronome 'That' (Regra de Vírgulas)",
+        pinnedText: null,
+        statement: "Examine the sentences below regarding the relative pronoun <b>that</b>:\n\n1. <i>The solar panels ________ were installed on the roof generate clean energy.</i>\n2. <i>Solar energy, ________ is renewable, helps reduce carbon emissions.</i>\n\nAssinale a opção que indica corretamente o preenchimento das lacunas quanto ao uso do pronome <b>that</b>:",
+        correctKey: "B",
+        options: {
+          A: "Ambas as lacunas podem ser preenchidas por 'that'.",
+          B: "Apenas a frase 1 aceita 'that'; a frase 2 não aceita 'that' por ser uma oração explicativa entre vírgulas.",
+          C: "Apenas a frase 2 aceita 'that'; a frase 1 exige obrigatoriamente 'which'.",
+          D: "Nenhuma das duas frases aceita o pronome 'that'.",
+          E: "A frase 2 aceita 'that' somente se a vírgula for colocada depois do pronome."
+        },
+        justification: "Resposta correta: B. Em inglês, o pronome relativo 'that' só pode ser usado em orações restritivas (sem vírgulas). Na frase 2, por ser uma Non-Defining Relative Clause (entre vírgulas), o uso de 'that' é proibido, devendo-se usar 'which'."
+      },
+      {
+        id: 4,
+        topic: "Uso ou Não do Pronome 'That' (Regra de Vírgulas)",
+        pinnedText: null,
+        statement: "Assinale a alternativa em que o uso do pronome relativo <b>that</b> é GRAMATICALMENTE INCORRETO devido à presença de vírgula(s):",
+        correctKey: "E",
+        options: {
+          A: "The car that burns gasoline emits dangerous pollutants into the atmosphere.",
+          B: "Appliance models that carry energy-efficient labels consume less electricity.",
+          C: "Students that recycle their plastic waste help preserve the environment.",
+          D: "The city implemented new buses that run entirely on electrical energy.",
+          E: "Greenhouse gases, that trap heat in the atmosphere, cause temperature increases."
+        },
+        justification: "Resposta correta: E. O pronome 'that' não pode introduzir orações explicativas (Non-Defining Relative Clauses) isoladas por vírgulas. A forma correta seria usar 'which': 'Greenhouse gases, which trap heat...'"
+      },
+      {
+        id: 5,
+        topic: "Uso ou Não do Pronome 'That' (Regra de Vírgulas)",
+        pinnedText: null,
+        statement: "Considere as seguintes frases e a possibilidade de substituição por <b>that</b>:\n\nSentence X: <i>My uncle, who drives an electric vehicle, saves money on fuel.</i>\nSentence Y: <i>The factories which burn coal contribute to atmospheric pollution.</i>\n\nMarque a análise correta sobre a substituição dos pronomes destacados por <b>that</b>:",
+        correctKey: "A",
+        options: {
+          A: "A substituição por 'that' é possível apenas na Sentence Y, pois a Sentence X contém uma oração entre vírgulas.",
+          B: "A substituição por 'that' é possível em ambas as sentenças sem nenhuma restrição.",
+          C: "A substituição por 'that' é possível apenas na Sentence X, pois refere-se a uma pessoa.",
+          D: "Nenhuma das sentenças permite a substituição pelo pronome 'that'.",
+          E: "A Sentence Y se torna incorreta se substituirmos 'which' por 'that'."
+        },
+        justification: "Resposta correta: A. Na Sentence X, as vírgulas indicam oração explicativa (Non-Defining), onde 'that' não é permitido. Na Sentence Y, como a oração é restritiva (Defining, sem vírgulas), 'which' pode ser perfeitamente substituído por 'that'."
+      },
+      {
+        id: 6,
+        topic: "Pronomes Relativos (Who, Which, That)",
+        pinnedText: null,
+        statement: "Choose the correct relative pronoun to complete the sentence:\n\n<b>\"The environmentalists ________ organized the global climate summit inspired millions of young students.\"</b>",
+        correctKey: "A",
+        options: {
+          A: "who",
+          B: "which",
+          C: "where",
+          D: "whose",
+          E: "what"
+        },
+        justification: "Resposta correta: A. O antecedente é 'The environmentalists' (pessoas no plural), exigindo o pronome relativo 'who' (ou 'that' em orações restritivas, porém 'who' é a escolha ideal para pessoas)."
+      },
+      {
+        id: 7,
+        topic: "Pronomes Relativos (Who, Which, That)",
+        pinnedText: null,
+        statement: "Assinale a alternativa que preenche adequadamente a lacuna referente a um objeto inanimado:\n\n<b>\"Old refrigerators ________ consume too much electricity should be recycled properly.\"</b>",
+        correctKey: "C",
+        options: {
+          A: "who",
+          B: "whom",
+          C: "which",
+          D: "where",
+          E: "whose"
+        },
+        justification: "Resposta correta: C. O antecedente 'Old refrigerators' é um objeto inanimado no plural, exigindo o pronome relativo 'which' (ou 'that'). Entre as opções apresentadas, 'which' é o pronome correto."
+      },
+      {
+        id: 8,
+        topic: "Pronomes Relativos (Who, Which, That)",
+        pinnedText: null,
+        statement: "Considere as duas orações a seguir:\n\n1. <i>The scientist published a study on global warming.</i>\n2. <i>She won an international environmental award.</i>\n\nAssinale a opção que une corretamente as duas orações utilizando o pronome <b>who</b> ou <b>that</b> sem redundâncias:",
+        correctKey: "B",
+        options: {
+          A: "The scientist who she published a study on global warming won an international award.",
+          B: "The scientist who published a study on global warming won an international environmental award.",
+          C: "The scientist which published a study on global warming won an international environmental award.",
+          D: "The scientist whose published a study on global warming won an award.",
+          E: "The scientist who published a study she won an international environmental award."
+        },
+        justification: "Resposta correta: B. O pronome 'who' substitui o sujeito 'The scientist'. A opção A erra por manter o pronome redundante 'she' após 'who'; a C usa 'which' para pessoas."
+      },
+      {
+        id: 9,
+        topic: "Pronomes Relativos (Who, Which, That)",
+        pinnedText: null,
+        statement: "Examine a frase: <b>\"Bicycles are eco-friendly vehicles ________ do not emit any greenhouse gases during travel.\"</b>\n\nAssinale a opção com a combinação de pronomes que podem preencher a lacuna de forma gramaticalmente válida:",
+        correctKey: "D",
+        options: {
+          A: "who ou where",
+          B: "who ou that",
+          C: "whose ou which",
+          D: "which ou that",
+          E: "what ou which"
+        },
+        justification: "Resposta correta: D. Como o antecedente é 'eco-friendly vehicles' (coisas/objetos) em uma oração restritiva (sem vírgulas), é possível utilizar tanto 'which' quanto 'that'."
+      },
+      {
+        id: 10,
+        topic: "Pronomes Relativos (Who, Which, That)",
+        pinnedText: null,
+        statement: "Assinale a alternativa que apresenta o uso CORRETO do pronome relativo em contexto formal sobre preservação ambiental:",
+        correctKey: "E",
+        options: {
+          A: "The citizens which clean the local beaches every weekend protect marine life.",
+          B: "Plastic pollution, that damages ocean ecosystems, must be reduced immediately.",
+          C: "The engineer who he invented the solar-powered car was interviewed on television.",
+          D: "The eco-friendly products who are manufactured locally save transport energy.",
+          E: "Engineers who design energy-efficient appliances help families reduce their power consumption."
+        },
+        justification: "Resposta correta: E. O pronome 'who' é usado corretamente para o antecedente humano 'Engineers'. A alternativa A erra ao usar 'which' para pessoas; B usa 'that' entre vírgulas; C tem pleonasmo ('who he'); D usa 'who' para produtos."
+      }
+    ];
+
+    // ESTADO DA APLICAÇÃO E EMBARALHAMENTO DO GABARITO (Fisher-Yates)
+    let processedQuestions = [];
+    let userAnswers = {};
+    let checkedQuestions = {};
+    let currentQuestionIndex = 0;
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function initQuizData() {
+      processedQuestions = rawQuestions.map((q) => {
+        const originalKeys = ['A', 'B', 'C', 'D', 'E'];
+        const optionsList = originalKeys.map(key => ({
+          originalKey: key,
+          text: q.options[key]
+        }));
+
+        // Embaralhamento das opções
+        const shuffledOptions = shuffleArray(optionsList);
+
+        const newLetterLabels = ['A', 'B', 'C', 'D', 'E'];
+        let mappedCorrectLetter = '';
+
+        const finalOptions = shuffledOptions.map((opt, index) => {
+          const currentLabel = newLetterLabels[index];
+          if (opt.originalKey === q.correctKey) {
+            mappedCorrectLetter = currentLabel;
+          }
+          return {
+            label: currentLabel,
+            text: opt.text,
+            originalKey: opt.originalKey
+          };
+        });
+
+        return {
+          ...q,
+          displayOptions: finalOptions,
+          correctDisplayLetter: mappedCorrectLetter
+        };
+      });
+    }
+
+    function buildNavGrid() {
+      const navGrid = document.getElementById('nav-grid');
+      navGrid.innerHTML = '';
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'nav-btn';
+        btn.id = `nav-btn-${i}`;
+        btn.innerText = i + 1;
+        btn.onclick = () => jumpToQuestion(i);
+        navGrid.appendChild(btn);
+      }
+      updateNavStatus();
+    }
+
+    function updateNavStatus() {
+      for (let i = 0; i < processedQuestions.length; i++) {
+        const btn = document.getElementById(`nav-btn-${i}`);
+        if (!btn) continue;
+        btn.classList.remove('active', 'correct', 'incorrect');
+
+        if (i === currentQuestionIndex) {
+          btn.classList.add('active');
+        }
+
+        if (checkedQuestions[i]) {
+          const isCorrect = userAnswers[i] === processedQuestions[i].correctDisplayLetter;
+          if (isCorrect) {
+            btn.classList.add('correct');
+          } else {
+            btn.classList.add('incorrect');
+          }
+        }
+      }
+    }
+
+    function renderQuestion(index) {
+      const q = processedQuestions[index];
+
+      document.getElementById('question-title').innerText = `Questão ${index + 1} de 10`;
+
+      // Pinned Text Box para Q1 e Q2
+      const pinnedBox = document.getElementById('pinned-text-box');
+      const pinnedContent = document.getElementById('pinned-text-content');
+      if (q.pinnedText) {
+        pinnedContent.innerText = q.pinnedText;
+        pinnedBox.style.display = 'block';
+      } else {
+        pinnedBox.style.display = 'none';
+      }
+
+      document.getElementById('statement-text').innerHTML = q.statement.replace(/\n/g, '<br>');
+
+      const optionsContainer = document.getElementById('options-list');
+      optionsContainer.innerHTML = '';
+
+      const isChecked = checkedQuestions[index];
+
+      q.displayOptions.forEach((opt) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'option-item';
+
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = `option-${index}`;
+        radio.value = opt.label;
+        radio.id = `opt-${opt.label}`;
+        radio.disabled = !!isChecked;
+
+        if (userAnswers[index] === opt.label) {
+          radio.checked = true;
+          itemDiv.classList.add('selected');
+        }
+
+        if (isChecked) {
+          if (opt.label === q.correctDisplayLetter) {
+            itemDiv.classList.add('correct-bg');
+          } else if (userAnswers[index] === opt.label) {
+            itemDiv.classList.add('incorrect-bg');
+          }
+        } else {
+          itemDiv.onclick = () => selectOption(index, opt.label);
+        }
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'option-text';
+        labelSpan.innerHTML = `<strong>${opt.label})</strong> ${opt.text}`;
+
+        itemDiv.appendChild(radio);
+        itemDiv.appendChild(labelSpan);
+        optionsContainer.appendChild(itemDiv);
+      });
+
+      const feedbackBox = document.getElementById('feedback-box');
+      const feedbackText = document.getElementById('feedback-text');
+      if (isChecked) {
+        let textJust = q.justification;
+        textJust = textJust.replace(/Resposta correta: [A-E]\./, `Resposta correta: ${q.correctDisplayLetter}.`);
+        feedbackText.innerText = textJust;
+        feedbackBox.classList.add('show');
+      } else {
+        feedbackBox.classList.remove('show');
+      }
+
+      const btnCheck = document.getElementById('btn-check');
+      btnCheck.disabled = !userAnswers[index] || isChecked;
+
+      const btnNext = document.getElementById('btn-next');
+      if (index === processedQuestions.length - 1) {
+        btnNext.innerText = 'Finish';
+        btnNext.classList.add('btn-finish');
+      } else {
+        btnNext.innerText = 'Next';
+        btnNext.classList.remove('btn-finish');
+      }
+
+      const btnPrev = document.getElementById('btn-prev');
+      btnPrev.disabled = index === 0;
+
+      updateNavStatus();
+    }
+
+    function selectOption(qIndex, label) {
+      if (checkedQuestions[qIndex]) return;
+      userAnswers[qIndex] = label;
+
+      const items = document.querySelectorAll('.option-item');
+      items.forEach(item => item.classList.remove('selected'));
+
+      const radio = document.getElementById(`opt-${label}`);
+      if (radio) {
+        radio.checked = true;
+        radio.closest('.option-item').classList.add('selected');
+      }
+
+      document.getElementById('btn-check').disabled = false;
+    }
+
+    function checkAnswer() {
+      if (!userAnswers[currentQuestionIndex]) return;
+      checkedQuestions[currentQuestionIndex] = true;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function jumpToQuestion(index) {
+      currentQuestionIndex = index;
+      renderQuestion(currentQuestionIndex);
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < processedQuestions.length - 1) {
+        currentQuestionIndex++;
+        renderQuestion(currentQuestionIndex);
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderQuestion(currentQuestionIndex);
+      }
+    }
+
+    function finishQuiz() {
+      let totalCorrect = 0;
+      let topicErrors = {};
+      let topicTotals = {};
+
+      processedQuestions.forEach((q, idx) => {
+        const topic = q.topic;
+        if (!topicTotals[topic]) {
+          topicTotals[topic] = 0;
+          topicErrors[topic] = 0;
+        }
+        topicTotals[topic]++;
+
+        const userAns = userAnswers[idx];
+        if (userAns === q.correctDisplayLetter) {
+          totalCorrect++;
+        } else {
+          topicErrors[topic]++;
+        }
+      });
+
+      const totalQuestions = processedQuestions.length;
+      const totalIncorrect = totalQuestions - totalCorrect;
+      
+      // Nota final valendo 10,0
+      const score = (totalCorrect * 1.0).toFixed(1);
+
+      const correctPct = Math.round((totalCorrect / totalQuestions) * 100);
+      const incorrectPct = Math.round((totalIncorrect / totalQuestions) * 100);
+
+      document.getElementById('score-display').innerText = `Sua Nota: ${score.replace('.', ',')} / 10,0`;
+      document.getElementById('stat-correct').innerText = `${totalCorrect} (${correctPct}%)`;
+      document.getElementById('stat-incorrect').innerText = `${totalIncorrect} (${incorrectPct}%)`;
+
+      const diagnosticsList = document.getElementById('diagnostics-list');
+      diagnosticsList.innerHTML = '';
+
+      let needsRevision = false;
+
+      for (const topic in topicTotals) {
+        const errors = topicErrors[topic];
+        const total = topicTotals[topic];
+        const errorPct = (errors / total) * 100;
+
+        if (errorPct > 30) {
+          needsRevision = true;
+          const li = document.createElement('li');
+          let recommendationText = "";
+
+          if (topic.includes("Compreensão")) {
+            recommendationText = "<strong>Compreensão Textual:</strong> Reforçar leitura analítica para identificar inferências e soluções ambientais em textos informativos.";
+          } else if (topic.includes("Uso ou Não do Pronome 'That'")) {
+            recommendationText = "<strong>Regra do uso de 'That' e Vírgulas:</strong> Revisar a proibição do uso de <i>that</i> em orações explicativas (entre vírgulas) e a diferença entre orações restritivas e não-restritivas.";
+          } else if (topic.includes("Pronomes Relativos")) {
+            recommendationText = "<strong>Pronomes Relativos (Who, Which, That):</strong> Praticar a diferenciação do antecedente — <i>who</i> para pessoas, <i>which</i> para coisas/objetos e <i>that</i> em orações restritivas gerais.";
+          } else {
+            recommendationText = `<strong>${topic}:</strong> Recomenda-se revisar este conteúdo específico (Percentual de erro: ${Math.round(errorPct)}%).`;
+          }
+
+          li.innerHTML = recommendationText;
+          diagnosticsList.appendChild(li);
+        }
+      }
+
+      if (!needsRevision) {
+        const li = document.createElement('li');
+        li.innerHTML = "<strong>Parabéns!</strong> Você demonstrou excelente domínio em todos os tópicos avaliados (taxa de erro inferior a 30%). Continue praticando!";
+        diagnosticsList.appendChild(li);
+      }
+
+      document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function restartQuiz() {
+      userAnswers = {};
+      checkedQuestions = {};
+      currentQuestionIndex = 0;
+      document.getElementById('modal-overlay').style.display = 'none';
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    }
+
+    window.onload = function() {
+      initQuizData();
+      buildNavGrid();
+      renderQuestion(0);
+    };
+  </script>
+</body>
+</html>
